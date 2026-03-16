@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mcp-redis-monitor"
+version = "0.1.0"
+description = "FastMCP server providing read-only Redis monitoring tools"
+requires-python = ">=3.12"
+dependencies = [
+    "mcp>=1.0.0",
+    "redis>=5.0.0",
+]
+
+[project.scripts]
+mcp-redis-monitor = "mcp_redis_monitor.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mcp_redis_monitor"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "ruff",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
