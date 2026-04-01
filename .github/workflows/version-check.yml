@@ -16,7 +16,7 @@ jobs:
       - name: Check VERSION bump on code changes
         run: |
           CHANGED=$(git diff --name-only HEAD~1 HEAD)
-          CODE_CHANGED=$(echo "$CHANGED" | grep -vE '^(docs/|\.md$|\.agents/|CLAUDE\.md|AGENTS\.md|GEMINI\.md|\.github/|LICENSE|\.gitignore)' || true)
+          CODE_CHANGED=$(echo "$CHANGED" | grep -vE '^(docs/|\.githooks/|\.md$|\.agents/|CLAUDE\.md|AGENTS\.md|GEMINI\.md|\.github/|LICENSE|\.gitignore)' || true)
           if [ -z "$CODE_CHANGED" ]; then
             echo "Only docs/configs changed — no VERSION bump required"
             exit 0

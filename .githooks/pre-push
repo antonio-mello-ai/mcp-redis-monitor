@@ -31,7 +31,7 @@ while read local_ref local_sha remote_ref remote_sha; do
     fi
 
     # Check if any code files changed (not just docs/configs)
-    code_changed=$(echo "$changed_files" | grep -vE '^(docs/|\.md$|\.agents/|CLAUDE\.md|AGENTS\.md|GEMINI\.md|\.github/|LICENSE|\.gitignore)' || true)
+    code_changed=$(echo "$changed_files" | grep -vE '^(docs/|\.githooks/|\.md$|\.agents/|CLAUDE\.md|AGENTS\.md|GEMINI\.md|\.github/|LICENSE|\.gitignore)' || true)
 
     if [ -z "$code_changed" ]; then
         # Only docs/configs changed — no version bump needed
