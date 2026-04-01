@@ -1,0 +1,33 @@
+name: Version Check
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  version-check:
+    name: Verify VERSION bump
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check VERSION bump on code changes
+        run: |
+          CHANGED=$(git diff --name-only HEAD~1 HEAD)
+          CODE_CHANGED=$(echo "$CHANGED" | grep -vE '^(docs/|\.md$|\.agents/|CLAUDE\.md|AGENTS\.md|GEMINI\.md|\.github/|LICENSE|\.gitignore)' || true)
+          if [ -z "$CODE_CHANGED" ]; then
+            echo "Only docs/configs changed — no VERSION bump required"
+            exit 0
+          fi
+          VERSION_BUMPED=$(echo "$CHANGED" | grep -c '^VERSION$' || true)
+          if [ "$VERSION_BUMPED" -eq 0 ]; then
+            echo "::error::Code files changed but VERSION was not bumped."
+            echo "Changed code files:"
+            echo "$CODE_CHANGED"
+            echo "Current VERSION: $(cat VERSION)"
+            echo "Bump the VERSION file and push again."
+            exit 1
+          fi
+          echo "VERSION bumped to $(cat VERSION)"

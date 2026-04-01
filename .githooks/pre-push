@@ -1,0 +1,68 @@
+#!/bin/bash
+# pre-push hook: enforce VERSION bump when code changes are pushed
+#
+# Checks if VERSION file was modified in the commits being pushed.
+# Only enforces when actual code files changed (ignores docs-only pushes).
+#
+# Install: git config core.hooksPath .githooks
+
+set -e
+
+# Read stdin: <local ref> <local sha> <remote ref> <remote sha>
+while read local_ref local_sha remote_ref remote_sha; do
+    # Skip branch deletion
+    if [ "$local_sha" = "0000000000000000000000000000000000000000" ]; then
+        continue
+    fi
+
+    # Determine range of commits being pushed
+    if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+        # New branch — compare against main
+        range="origin/main...$local_sha"
+    else
+        range="$remote_sha..$local_sha"
+    fi
+
+    # Get list of changed files in this push
+    changed_files=$(git diff --name-only "$range" 2>/dev/null || true)
+
+    if [ -z "$changed_files" ]; then
+        continue
+    fi
+
+    # Check if any code files changed (not just docs/configs)
+    code_changed=$(echo "$changed_files" | grep -vE '^(docs/|\.md$|\.agents/|CLAUDE\.md|AGENTS\.md|GEMINI\.md|\.github/|LICENSE|\.gitignore)' || true)
+
+    if [ -z "$code_changed" ]; then
+        # Only docs/configs changed — no version bump needed
+        continue
+    fi
+
+    # Code changed — check if VERSION was bumped
+    version_bumped=$(echo "$changed_files" | grep -c '^VERSION$' || true)
+
+    if [ "$version_bumped" -eq 0 ]; then
+        echo ""
+        echo "============================================"
+        echo "  VERSION bump required before pushing!"
+        echo "============================================"
+        echo ""
+        echo "Code files changed but VERSION was not updated."
+        echo ""
+        echo "Current version: $(cat VERSION 2>/dev/null || echo 'N/A')"
+        echo ""
+        echo "How to bump:"
+        echo "  patch (bug fix):      echo '$(cat VERSION 2>/dev/null | awk -F. '{print $1"."$2"."$3+1}')' > VERSION"
+        echo "  minor (new feature):  echo '$(cat VERSION 2>/dev/null | awk -F. '{print $1"."$2+1".0"}')' > VERSION"
+        echo "  major (breaking):     echo '$(cat VERSION 2>/dev/null | awk -F. '{print $1+1".0.0"}')' > VERSION"
+        echo ""
+        echo "Then: git add VERSION && git commit --amend --no-edit && git push"
+        echo ""
+        echo "To skip (emergency only): git push --no-verify"
+        echo "============================================"
+        echo ""
+        exit 1
+    fi
+done
+
+exit 0
