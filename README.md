@@ -5,7 +5,11 @@ FastMCP server providing read-only tools to monitor Redis instances.
 ## Install
 
 ```bash
-pip install -e ".[dev]"
+# Run directly with uvx (no install needed)
+uvx mcp-redis-monitor
+
+# Or install with pip
+pip install mcp-redis-monitor
 ```
 
 ## Environment Variables
