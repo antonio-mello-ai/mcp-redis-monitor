@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import json
 from contextlib import asynccontextmanager
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
-
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _make_mock_redis(
     *,
@@ -150,9 +150,7 @@ class TestGetCeleryQueueStatus:
 class TestGetConnectedClients:
     @pytest.mark.asyncio
     async def test_returns_client_count(self) -> None:
-        mock = _make_mock_redis(
-            info_data={"clients": {"connected_clients": 42}}
-        )
+        mock = _make_mock_redis(info_data={"clients": {"connected_clients": 42}})
 
         with patch(
             "mcp_redis_monitor.tools.info.get_redis",
