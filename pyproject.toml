@@ -4,11 +4,11 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-redis-monitor"
-version = "0.1.0"
+version = "0.1.1"
 description = "FastMCP server providing read-only Redis monitoring tools"
 requires-python = ">=3.12"
 dependencies = [
-    "mcp>=1.0.0",
+    "mcp>=1.2.0,<2",
     "redis>=5.0.0",
 ]
 
