@@ -2,6 +2,11 @@
 
 FastMCP server providing read-only tools to monitor Redis instances.
 
+The server reads Redis metadata and queue state over stdio. It does not write,
+delete or dequeue data. For production use, configure a dedicated
+least-privilege Redis identity; username and TLS support are tracked in
+[Issue #4](https://github.com/antonio-mello-ai/mcp-redis-monitor/issues/4).
+
 ## Install
 
 ```bash
@@ -59,3 +64,14 @@ pytest
 ## License
 
 MIT
+
+## Documentation and roadmap
+
+- [Current product flows](docs/fluxos-negocio.md)
+- [Architecture](docs/arquitetura.md)
+- [Operations](docs/operacao.md)
+- [Documentation index](docs/index.md)
+- [Open roadmap items](https://github.com/antonio-mello-ai/mcp-redis-monitor/issues)
+
+Priorities live in GitHub Issues and Projects. Delivery history lives in closed
+Issues, pull requests and GitHub Releases.
